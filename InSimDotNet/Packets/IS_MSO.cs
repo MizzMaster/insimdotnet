@@ -41,24 +41,28 @@ namespace InSimDotNet.Packets {
         public UserType UserType { get; private set; }
 
         /// <summary>
-        /// Gets the first character of the message text after the player name.
+        /// Gets the first character of the actual text (after player name).
         /// </summary>
         public byte TextStart { get; private set; }
 
         /// <summary>
-        /// Gets the full message (nick + message).
+        /// Gets the full message (name + text).
         /// </summary>
-        public string FullMsg { get; private set; }
-
-
-        [Obsolete("Should now use "+nameof(FullMsg))]
-        /// <summary>
-        /// Gets the full message (nick + message).
-        /// </summary>
-        public string Msg => FullMsg;
+        public string Msg { get; private set; }
 
         /// <summary>
-        /// Gets the text message ( it doesn't include sender nickname).
+        /// Gets the first character of the actual raw text (after player name).
+        /// </summary>
+        public byte RawTextStart { get; private set; }
+
+        /// <summary>
+        /// Gets the raw bytes of the <see cref="Msg"/> string.
+        /// </summary>
+        public byte[] RawMsg => _rawMsg;
+        private readonly byte[] _rawMsg;
+
+        /// <summary>
+        /// Gets the text message (it doesn't include player name).
         /// </summary>
         public string Text { get; private set; }
 
@@ -68,7 +72,7 @@ namespace InSimDotNet.Packets {
         public IS_MSO() {
             Size = DefaultSize;
             Type = PacketType.ISP_MSO;
-            FullMsg = string.Empty;
+            Msg = string.Empty;
         }
 
         /// <summary>
@@ -85,22 +89,23 @@ namespace InSimDotNet.Packets {
             UCID = reader.ReadByte();
             PLID = reader.ReadByte();
             UserType = (UserType)reader.ReadByte();
-            int textStart = reader.ReadByte();
+            RawTextStart = reader.ReadByte();
 
             // the length of the message will be the size of the packet minus all the above crap.
             int msgLength = Size - DefaultSize;
+            _rawMsg = reader.ReadBytes(msgLength);
 
             // Need to correct textstart after we've converted string to unicode.
-            if (textStart > 0) {
-                var pname = reader.ReadString(textStart);
-                TextStart = (byte)pname.Length;
-                var msg= reader.ReadString(msgLength - textStart);
-                FullMsg = pname + msg;
-                Text = msg;
+            if (RawTextStart > 0) {
+                string preText = LfsEncoding.Current.GetString(RawMsg, 0, RawTextStart);
+                Text = LfsEncoding.Current.GetString(RawMsg, RawTextStart, RawMsg.Length - RawTextStart);
+                TextStart = (byte)preText.Length;
+                Msg = preText + Text;
             }
             else {
-                FullMsg = reader.ReadString(msgLength);
-                Text = FullMsg;
+                Text = LfsEncoding.Current.GetString(RawMsg, 0, RawMsg.Length);
+                TextStart = 0;
+                Msg = Text;
             }
         }
     }

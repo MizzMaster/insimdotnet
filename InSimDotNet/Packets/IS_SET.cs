@@ -40,11 +40,17 @@ namespace InSimDotNet.Packets
         /// FuelLoad at start
         /// </summary>
         public byte FuelLoad { get; private set; }
-        
+
         /// <summary>
         /// nearly the same as a setup file without the first 12 bytes (but see note below about gear ratios)
         /// </summary>
         public byte[] Setup { get; private set; }
+
+        /// <summary>
+        /// Raw bytes of the <see cref="CName"/> string.
+        /// </summary>
+        public byte[] RawCName => _rawCName;
+        private readonly byte[] _rawCName;
 
         /// <summary>
         /// Gets the parsed representation of the current car setup.
@@ -86,7 +92,7 @@ namespace InSimDotNet.Packets
             Type = (PacketType)reader.ReadByte();
             ReqI = reader.ReadByte();
             PLID = reader.ReadByte();
-            CName = reader.ReadCNameString();
+            CName = reader.ReadCNameString(out _rawCName);
             reader.Skip(4);
             FuelLoad = reader.ReadByte();
             reader.Skip(3);
