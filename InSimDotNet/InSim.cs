@@ -42,6 +42,16 @@ namespace InSimDotNet {
         public event EventHandler<PacketEventArgs> PacketReceived;
 
         /// <summary>
+        /// Occurs before callbacks are made.
+        /// </summary>
+        public event EventHandler<PacketEventArgs> PreCallbacks;
+
+        /// <summary>
+        /// Occurs after callbacks are made.
+        /// </summary>
+        public event EventHandler<PacketEventArgs> PostCallbacks;
+        
+        /// <summary>
         /// Gets if LFS is connected.
         /// </summary>
         public bool IsConnected {
@@ -524,7 +534,9 @@ namespace InSimDotNet {
             OnPacketReceived(e);
 
             if (!e.IsHandled) {
+                OnPreCallbacks(e);
                 bindings.ExecuteCallbacks(this, packet);
+                OnPostCallbacks(e);
             }
         }
 
@@ -641,6 +653,32 @@ namespace InSimDotNet {
         protected virtual void OnPacketReceived(PacketEventArgs e) {
             EventHandler<PacketEventArgs> temp = PacketReceived;
             if (temp != null) {
+                temp(this, e);
+            }
+        }
+
+        /// <summary>
+        /// Raises the PreCallbacks event.
+        /// </summary>
+        /// <param name="e">The <see cref="PacketEventArgs"/> object containing the event data</param>
+        protected virtual void OnPreCallbacks(PacketEventArgs e)
+        {
+            EventHandler<PacketEventArgs> temp = PreCallbacks;
+            if (temp != null)
+            {
+                temp(this, e);
+            }
+        }
+
+        /// <summary>
+        /// Raises the PostCallbacks event.
+        /// </summary>
+        /// <param name="e">The <see cref="PacketEventArgs"/> object containing the event data</param>
+        protected virtual void OnPostCallbacks(PacketEventArgs e)
+        {
+            EventHandler<PacketEventArgs> temp = PostCallbacks;
+            if (temp != null)
+            {
                 temp(this, e);
             }
         }
