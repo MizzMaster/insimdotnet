@@ -5,8 +5,6 @@ VisualStudioVersion = 17.12.35707.178 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InSimDotNet", "InSimDotNet\InSimDotNet.csproj", "{4B4C5B90-2CEF-400C-B448-3E26AB737392}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InSimDotNet.Test", "InSimDotNet.Test\InSimDotNet.Test.csproj", "{A7400385-BFB3-41F9-9C45-A57472504135}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
