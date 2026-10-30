@@ -18,6 +18,7 @@
 		<Authors>AlexMcBride</Authors>
 		<RepositoryUrl>https://github.com/alexmcbride/insimdotnet</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
+    <NoWarn>$(NoWarn);CS3021</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
